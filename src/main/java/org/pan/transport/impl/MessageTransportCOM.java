@@ -7,6 +7,9 @@ import org.pan.transport.AbstractMessageTransport;
 import org.pan.transport.MessageTransport;
 import org.pan.transport.MessageTransportException;
 
+import java.io.IOException;
+import java.util.concurrent.TimeUnit;
+
 /**
  * COM 通信端口
  * Created by xiaopan on 2015-12-31.
@@ -59,6 +62,36 @@ public class MessageTransportCOM extends AbstractMessageTransport implements Mes
             throw new MessageTransportException("sendMessage invoke SerialPortException",e);
         } catch (SerialPortTimeoutException e) {
             throw new MessageTransportException("sendMessageNoReturn invoke SerialPortTimeoutException",e);
+        }
+    }
+
+    @Override
+    public byte[] sendMessage(byte[] bytes, int returnSize, int timeOut, int sleepTime) throws MessageTransportException {
+        byte[] result = sendMessage(bytes, returnSize, timeOut);
+        try {
+            TimeUnit.MILLISECONDS.sleep(sleepTime);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        return result;
+    }
+
+    @Override
+    public void close() throws IOException {
+        try {
+            serialPort.closePort();
+        } catch (SerialPortException e) {
+            new IOException("关闭串口失败",e);
+        }
+    }
+
+    public boolean isReady() {
+        try {
+            open();
+            close();
+            return true;
+        }catch (Exception e){
+            return false;
         }
     }
 }

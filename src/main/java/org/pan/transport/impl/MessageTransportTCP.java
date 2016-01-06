@@ -74,4 +74,32 @@ public class MessageTransportTCP extends AbstractMessageTransport implements Mes
             throw new MessageTransportException("sendMessage invoke InterruptedException");
         }
     }
+
+    @Override
+    public byte[] sendMessage(byte[] bytes, int returnSize, int timeOut, int sleepTime) throws MessageTransportException {
+        byte[] result = sendMessage(bytes, returnSize, timeOut);
+        try {
+            TimeUnit.MILLISECONDS.sleep(sleepTime);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        return result;
+    }
+
+    @Override
+    public void close() throws IOException {
+        if (this.socket != null && !this.socket.isClosed()){
+            this.socket.close();
+        }
+    }
+
+    public boolean isReady() {
+        try {
+            open();
+            close();
+            return true;
+        }catch (Exception e){
+            return false;
+        }
+    }
 }

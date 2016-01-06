@@ -11,14 +11,9 @@ public class MessageAddress {
     private MessageType messageType;
     private String address;
 
-    public void setTcpMessageAddress(String ip,String port){
-        this.messageType = MessageType.TCP;
-        this.address = ip + ":" + port;
-    }
-
-    public void setComMessageAddress(String com){
-        this.messageType = MessageType.COM;
-        this.address = com;
+    private MessageAddress(MessageType messageType, String address) {
+        this.messageType = messageType;
+        this.address = address;
     }
 
     public MessageType getMessageType() {
@@ -27,5 +22,14 @@ public class MessageAddress {
 
     public String getAddress() {
         return address;
+    }
+
+
+    public static MessageAddress createTcpMessageAddress(String ip,String port){
+        return new MessageAddress(MessageType.TCP,ip + ":" + port);
+    }
+
+    public static MessageAddress createComMessageAddress(String com){
+        return new MessageAddress(MessageType.COM,com);
     }
 }
